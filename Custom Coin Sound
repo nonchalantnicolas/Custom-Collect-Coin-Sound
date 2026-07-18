@@ -57,6 +57,7 @@ local LocalPlayer = Players.LocalPlayer
 local features = {
     enabled = false,
     soundId = "rbxassetid://7158356564",
+    hasAppliedSound = false,
 }
 
 local connections = {}
@@ -100,7 +101,10 @@ local function replaceCoinSound(part)
             if not sound:GetAttribute("Replaced") then
                 sound.Volume = 0
                 sound:SetAttribute("Replaced", true)
-                createReplacementSound(sound.Parent)
+                
+                if features.hasAppliedSound then
+                    createReplacementSound(sound.Parent)
+                end
             end
         end
     end
@@ -140,21 +144,23 @@ local function monitorCharacter(character)
                         sound.Volume = 0
                         sound:SetAttribute("Replaced", true)
                         
-                        local newSound = Instance.new("Sound")
-                        newSound.Name = "ReplacementSound"
-                        newSound.SoundId = features.soundId
-                        newSound.Volume = 1
-                        newSound.PlayOnRemove = false
-                        newSound.Parent = part
-                        newSound:Play()
-                        
-                        newSound.Ended:Connect(function()
-                            newSound:Destroy()
-                        end)
-                        
-                        task.wait(2)
-                        if newSound.Parent and not newSound.IsPlaying then
-                            newSound:Destroy()
+                        if features.hasAppliedSound then
+                            local newSound = Instance.new("Sound")
+                            newSound.Name = "ReplacementSound"
+                            newSound.SoundId = features.soundId
+                            newSound.Volume = 1
+                            newSound.PlayOnRemove = false
+                            newSound.Parent = part
+                            newSound:Play()
+                            
+                            newSound.Ended:Connect(function()
+                                newSound:Destroy()
+                            end)
+                            
+                            task.wait(2)
+                            if newSound.Parent and not newSound.IsPlaying then
+                                newSound:Destroy()
+                            end
                         end
                     end
                 end
@@ -195,6 +201,7 @@ end
 
 local function applySound()
     if features.enabled then
+        features.hasAppliedSound = true
         disablePlugin()
         enablePlugin()
         shared.Notify("Custom coin sound applied!", 2)
@@ -210,8 +217,10 @@ section:AddParagraph("Side Notes", "Replaces the original collect coin sound wit
 section:AddToggle("Coin Sound Id", function(bool)
     features.enabled = bool
     if bool then
+        features.hasAppliedSound = false
         enablePlugin()
     else
+        features.hasAppliedSound = false
         disablePlugin()
     end
 end)
@@ -228,5 +237,6 @@ end)
 
 RootNicolas:GiveTask(function()
     features.enabled = false
+    features.hasAppliedSound = false
     disablePlugin()
 end)
