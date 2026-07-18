@@ -193,6 +193,16 @@ local function disablePlugin()
     cleanupConnections()
 end
 
+local function applySound()
+    if features.enabled then
+        disablePlugin()
+        enablePlugin()
+        shared.Notify("Custom coin sound applied!", 2)
+    else
+        shared.Notify("Enable the toggle first!", 2)
+    end
+end
+
 local section = shared.AddSection("Custom Coin Sound")
 
 section:AddParagraph("Side Notes", "Replaces the original collect coin sound with your own!\n\nCredits: @drowsynicolas")
@@ -206,14 +216,14 @@ section:AddToggle("Coin Sound Id", function(bool)
     end
 end)
 
-local textbox = section:AddTextBox("Sound ID (rbxassetid://...)", function(text)
+section:AddTextBox("Enter sound ID (rbxassetid://...)", function(text)
     if text and text ~= "" then
         features.soundId = text
-        if features.enabled then
-            disablePlugin()
-            enablePlugin()
-        end
     end
+end)
+
+section:AddButton("Apply Custom Coin Sound", function()
+    applySound()
 end)
 
 RootNicolas:GiveTask(function()
