@@ -74,6 +74,15 @@ local function cleanupConnections()
     globalConnections = {}
 end
 
+local function isValidSoundId(input)
+    if not input or input == "" then return false end
+    local num = tonumber(input)
+    if num and num > 0 then
+        return true
+    end
+    return false
+end
+
 local function replaceCoinSound(part)
     if not part then return end
     
@@ -201,10 +210,15 @@ end
 
 local function applySound()
     if features.enabled then
-        features.hasAppliedSound = true
-        disablePlugin()
-        enablePlugin()
-        shared.Notify("Custom coin sound applied!", 2)
+        local soundId = features.soundId:match("%d+")
+        if soundId and isValidSoundId(soundId) then
+            features.hasAppliedSound = true
+            disablePlugin()
+            enablePlugin()
+            shared.Notify("Custom coin sound applied!", 2)
+        else
+            shared.Notify("Invalid sound ID! Please enter only numbers.", 3)
+        end
     else
         shared.Notify("Enable the toggle first!", 2)
     end
@@ -225,9 +239,12 @@ section:AddToggle("Coin Sound Id", function(bool)
     end
 end)
 
-section:AddTextBox("Enter sound ID (rbxassetid://...)", function(text)
+section:AddTextBox("Enter sound ID (numbers only)", function(text)
     if text and text ~= "" then
-        features.soundId = text
+        local num = text:match("%d+")
+        if num and tonumber(num) then
+            features.soundId = "rbxassetid://" .. num
+        end
     end
 end)
 
