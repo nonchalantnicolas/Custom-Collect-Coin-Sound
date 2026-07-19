@@ -246,7 +246,7 @@ section:AddTextBox("Enter sound ID (numbers only)", function(text)
             features.soundId = "rbxassetid://" .. num
         end
     end
-end)
+end, "")
 
 section:AddButton("Apply Custom Coin Sound", function()
     applySound()
