@@ -228,7 +228,7 @@ local section = shared.AddSection("Custom Coin Sound")
 
 section:AddParagraph("Side Notes", "Replaces the original collect coin sound with your own!\n\nCredits: @drowsynicolas")
 
-section:AddToggle("Coin Sound Id", function(bool)
+section:AddToggle("Custom Coin Sound", function(bool)
     features.enabled = bool
     if bool then
         features.hasAppliedSound = false
